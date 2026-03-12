@@ -105,15 +105,15 @@ const Contact: React.FC = () => {
           <View style={styles.heroOverlay} />
           <Text style={styles.heroTitle}>Contact Us</Text>
           <Text style={styles.heroSubtitle}>
-            We'd love to hear from you. Get in touch with us!
+            We&apos;d love to hear from you. Get in touch with us!
           </Text>
         </View>
 
         <View style={styles.content}>
           <Text style={styles.sectionTitle}>Get In Touch</Text>
           <Text style={styles.sectionSubtitle}>
-            Have a question or feedback? Fill out the form and we'll get back to
-            you as soon as possible.
+            Have a question or feedback? Fill out the form and we&apos;ll get
+            back to you as soon as possible.
           </Text>
 
           <ContactInfo
