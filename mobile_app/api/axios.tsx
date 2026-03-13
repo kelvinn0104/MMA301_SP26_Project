@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
-const baseURL = "http://10.0.2.2:5001/api";
+const baseURL = "http://192.168.1.57:5001/api";
 
 const api = axios.create({
   baseURL,
@@ -27,12 +27,12 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       try {
-        // Xóa dữ liệu cũ
+        // Clear old data
         await AsyncStorage.multiRemove(["token", "user"]);
 
         router.replace("/auth");
       } catch (e) {
-        console.error("Lỗi khi xử lý logout", e);
+        console.error("Error during logout", e);
       }
     }
     return Promise.reject(error);

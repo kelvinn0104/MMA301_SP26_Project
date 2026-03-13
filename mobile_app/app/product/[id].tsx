@@ -142,7 +142,7 @@ export default function ProductDetailScreen() {
         const data = await productAPI.getById(id);
         setProduct(data.data || data);
       } catch {
-        Alert.alert("Lỗi", "Không thể tải sản phẩm");
+        Alert.alert("Error", "Failed to load product");
       } finally {
         setLoading(false);
       }
@@ -193,19 +193,19 @@ export default function ProductDetailScreen() {
   const handleAddToCart = useCallback(() => {
     if (!selectedSize) {
       Alert.alert(
-        "Chọn size",
-        "Vui lòng chọn size trước khi thêm vào giỏ hàng.",
+        "Select size",
+        "Please select a size before adding to cart.",
       );
       return;
     }
     addToCart(product, selectedSize, 1);
     setSelectedSize("");
-    Alert.alert("✓ Đã thêm", `${product.name} đã được thêm vào giỏ hàng.`);
+    Alert.alert("✓ Added", `${product.name} has been added to cart.`);
   }, [selectedSize, product, addToCart]);
 
   const handleBuyNow = useCallback(() => {
     if (!selectedSize) {
-      Alert.alert("Chọn size", "Vui lòng chọn size trước khi mua.");
+      Alert.alert("Select size", "Please select a size before buying.");
       return;
     }
     addToCart(product, selectedSize, quantity);
@@ -218,18 +218,18 @@ export default function ProductDetailScreen() {
       return;
     }
     if (!rating) {
-      Alert.alert("Thiếu đánh giá", "Vui lòng chọn số sao.");
+      Alert.alert("Review missing", "Please select a star rating.");
       return;
     }
     try {
       setIsSubmittingReview(true);
       await new Promise((r) => setTimeout(r, 800));
       Alert.alert(
-        "Thành công",
-        myReview ? "Đã cập nhật đánh giá." : "Cảm ơn đánh giá của bạn!",
+        "Success",
+        myReview ? "Review updated." : "Thank you for your review!",
       );
     } catch {
-      Alert.alert("Lỗi", "Không thể gửi đánh giá.");
+      Alert.alert("Error", "Failed to send review.");
     } finally {
       setIsSubmittingReview(false);
     }
@@ -315,7 +315,7 @@ export default function ProductDetailScreen() {
                 {product.averageRating.toFixed(1)} / 5.0
               </Text>
               <Text style={styles.reviewCountTxt}>
-                ({reviews.length} đánh giá)
+                ({reviews.length} reviews)
               </Text>
             </View>
           )}
@@ -449,7 +449,7 @@ export default function ProductDetailScreen() {
           ) : reviews.length === 0 ? (
             <View style={styles.emptyReviews}>
               <Feather name="message-square" size={32} color="#ddd" />
-              <Text style={styles.emptyReviewsTxt}>Chưa có đánh giá nào.</Text>
+              <Text style={styles.emptyReviewsTxt}>No reviews yet.</Text>
             </View>
           ) : (
             reviews.map((review) => (
@@ -459,7 +459,7 @@ export default function ProductDetailScreen() {
 
           <View style={styles.reviewFormCard}>
             <Text style={styles.reviewFormTitle}>
-              {myReview ? "Cập nhật đánh giá" : "Viết đánh giá"}
+              {myReview ? "Update review" : "Write a review"}
             </Text>
 
             {!isAuthenticated ? (
@@ -467,10 +467,10 @@ export default function ProductDetailScreen() {
                 <Feather name="lock" size={16} color="#92400e" />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.loginPromptTxt}>
-                    Bạn cần đăng nhập để đánh giá.
+                    You need to login to review.
                   </Text>
                   <TouchableOpacity onPress={() => router.push("/auth")}>
-                    <Text style={styles.loginPromptLink}>Đăng nhập ngay →</Text>
+                    <Text style={styles.loginPromptLink}>Login now →</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -482,12 +482,12 @@ export default function ProductDetailScreen() {
               </View>
             ) : (
               <>
-                <Text style={styles.ratingInputLabel}>Đánh giá của bạn</Text>
+                <Text style={styles.ratingInputLabel}>Your Rating</Text>
                 <StarInput rating={rating} onRate={setRating} />
                 <TextInput
                   value={comment}
                   onChangeText={setComment}
-                  placeholder="Chia sẻ cảm nhận về sản phẩm..."
+                  placeholder="Share your thoughts about the product..."
                   placeholderTextColor="#aaa"
                   multiline
                   numberOfLines={4}
@@ -506,7 +506,7 @@ export default function ProductDetailScreen() {
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text style={styles.submitReviewTxt}>
-                      {myReview ? "Cập nhật" : "Gửi đánh giá"}
+                      {myReview ? "Update" : "Submit review"}
                     </Text>
                   )}
                 </TouchableOpacity>

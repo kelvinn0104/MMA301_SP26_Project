@@ -16,9 +16,9 @@ export default function Footer() {
       <View style={styles.footerSection}>
         <Text style={styles.footerHeading}>CONTACT US</Text>
         {[
-          "Store I: 445 Sư Vạn Hạnh, P.12, Q.10.",
-          "Store II: TNP 26LTT - 26 Lý Tự Trọng, P.Bến Nghé, Q.1.",
-          "Store III: Tầng B1 Vincom Đồng Khởi, 72 Lê Thánh Tôn, Q.1.",
+          "Store I: 445 Su Van Hanh, Ward 12, District 10.",
+          "Store II: TNP 26LTT - 26 Ly Tu Trong, Ben Nghe Ward, District 1.",
+          "Store III: B1 Floor Vincom Dong Khoi, 72 Le Thanh Ton, District 1.",
         ].map((addr, i) => (
           <View key={i} style={styles.footerRow}>
             <Feather

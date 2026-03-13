@@ -172,9 +172,9 @@ export default function CartScreen() {
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      Alert.alert("Đăng nhập", "Bạn cần đăng nhập để thanh toán.", [
-        { text: "Huỷ", style: "cancel" },
-        { text: "Đăng nhập", onPress: () => router.push("/auth") },
+      Alert.alert("Login Required", "You need to login to checkout.", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Login", onPress: () => router.push("/auth") },
       ]);
       return;
     }
@@ -239,7 +239,7 @@ export default function CartScreen() {
                     style={styles.summaryRow}
                   >
                     <Text style={styles.summaryItemName} numberOfLines={1}>
-                      {item.product.name} × {item.quantity}
+                      {item.product.name} x {item.quantity}
                     </Text>
                     <Text style={styles.summaryItemPrice}>
                       {formatPrice(item.product.price * item.quantity)}

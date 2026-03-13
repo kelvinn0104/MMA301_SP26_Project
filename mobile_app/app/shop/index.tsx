@@ -286,7 +286,7 @@ function ProductCard({ product, onPress, onQuickView }: any) {
         )}
         {product.stock <= 0 && (
           <View style={styles.outOfStockOverlay}>
-            <Text style={styles.outOfStockOverlayTxt}>Hết hàng</Text>
+            <Text style={styles.outOfStockOverlayTxt}>Sold Out</Text>
           </View>
         )}
         <TouchableOpacity

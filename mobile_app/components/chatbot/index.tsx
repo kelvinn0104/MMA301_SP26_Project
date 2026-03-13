@@ -123,7 +123,7 @@ const Chatbot = () => {
       ]);
     } catch (err) {
       console.error("Chatbot error:", err);
-      setError("Không thể kết nối chatbot. Vui lòng thử lại.");
+      setError("Cannot connect to chatbot. Please try again.");
     } finally {
       setIsSending(false);
     }
@@ -211,9 +211,9 @@ const Chatbot = () => {
             <View style={styles.chatContainer}>
               <View style={styles.header}>
                 <View>
-                  <Text style={styles.headerTitle}>Trợ lý mua sắm</Text>
+                  <Text style={styles.headerTitle}>Shopping Assistant</Text>
                   <Text style={styles.headerSubtitle}>
-                    Hỏi về sản phẩm, size, giá, hoặc gợi ý
+                    Ask about products, size, price, or suggestions
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -237,7 +237,7 @@ const Chatbot = () => {
                 {!isAuthenticated && (
                   <View style={styles.authNotice}>
                     <Text style={styles.authNoticeText}>
-                      Vui lòng đăng nhập để sử dụng chatbot.
+                      Please login to use the chatbot.
                     </Text>
                   </View>
                 )}
@@ -245,7 +245,7 @@ const Chatbot = () => {
                 {isLoadingHistory && (
                   <View style={styles.loadingRow}>
                     <ActivityIndicator size="small" color="#9ca3af" />
-                    <Text style={styles.loadingText}>Đang tải lịch sử...</Text>
+                    <Text style={styles.loadingText}>Loading history...</Text>
                   </View>
                 )}
 
@@ -253,7 +253,7 @@ const Chatbot = () => {
                   isAuthenticated &&
                   !isLoadingHistory && (
                     <Text style={styles.emptyText}>
-                      Bạn muốn tìm sản phẩm gì hôm nay?
+                      What products are you looking for today?
                     </Text>
                   )}
 
@@ -280,7 +280,7 @@ const Chatbot = () => {
                   <TextInput
                     value={input}
                     onChangeText={setInput}
-                    placeholder="Nhập câu hỏi..."
+                    placeholder="Enter your question..."
                     placeholderTextColor="#9ca3af"
                     multiline
                     style={styles.textInput}

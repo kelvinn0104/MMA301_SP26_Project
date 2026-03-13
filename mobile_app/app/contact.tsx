@@ -132,8 +132,8 @@ const Contact: React.FC = () => {
             icon="location-outline"
             title="Address"
             lines={[
-              "Lô E2a-7, Đường D1, Đ. D1",
-              "Khu Công nghệ cao, Thủ Đức",
+              "Lot E2a-7, D1 Road",
+              "High Tech Park, Thu Duc",
               "Ho Chi Minh City, Vietnam",
             ]}
             onPress={openMap}

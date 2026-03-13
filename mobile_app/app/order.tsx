@@ -267,17 +267,17 @@ export default function OrderScreen() {
       !district ||
       !city
     )
-      return "Vui lòng điền đầy đủ thông tin!";
+      return "Please fill in all required fields!";
     if (!/^[0-9]{10,11}$/.test(phone))
-      return "Số điện thoại không hợp lệ (10-11 số)!";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email không hợp lệ!";
+      return "Invalid phone number (10-11 digits)!";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Invalid email!";
     return null;
   };
 
   const handleSubmit = async () => {
     const error = validate();
     if (error) {
-      Alert.alert("Lỗi", error);
+      Alert.alert("Error", error);
       return;
     }
 
@@ -311,7 +311,7 @@ export default function OrderScreen() {
         const paymentResponse = await vnpayAPI.createPaymentUrl({ orderId });
         const paymentUrl = paymentResponse?.paymentUrl;
         if (!paymentUrl) {
-          Alert.alert("Lỗi", "Không tạo được link thanh toán VNPay.");
+          Alert.alert("Error", "Could not create VNPay payment link.");
           return;
         }
 
@@ -322,14 +322,14 @@ export default function OrderScreen() {
 
       clearCart();
       Alert.alert(
-        "✓ Đặt hàng thành công!",
-        "Đơn hàng của bạn đã được tiếp nhận.",
-        [{ text: "Về trang chủ", onPress: () => router.push("/") }],
+        "✓ Order Successful!",
+        "Your order has been received.",
+        [{ text: "Back to Home", onPress: () => router.push("/") }],
       );
     } catch (err: any) {
       Alert.alert(
-        "Lỗi",
-        err?.response?.data?.message || "Đặt hàng thất bại! Vui lòng thử lại.",
+        "Error",
+        err?.response?.data?.message || "Order failed! Please try again.",
       );
     } finally {
       setLoading(false);
@@ -340,12 +340,12 @@ export default function OrderScreen() {
     return (
       <View style={styles.emptyWrap}>
         <Feather name="shopping-bag" size={56} color="#d1d5db" />
-        <Text style={styles.emptyTitle}>Giỏ hàng trống</Text>
+        <Text style={styles.emptyTitle}>Your cart is empty</Text>
         <TouchableOpacity
           onPress={() => router.push("/")}
           style={styles.emptyBtn}
         >
-          <Text style={styles.emptyBtnTxt}>Quay về trang chủ</Text>
+          <Text style={styles.emptyBtnTxt}>Back to Home</Text>
         </TouchableOpacity>
       </View>
     );
@@ -362,21 +362,21 @@ export default function OrderScreen() {
             onPress={() => router.push("/cart")}
             style={styles.breadcrumbBtn}
           >
-            <Text style={styles.breadcrumbTxt}>GIỎ HÀNG</Text>
+            <Text style={styles.breadcrumbTxt}>CART</Text>
           </TouchableOpacity>
           <Feather name="chevron-right" size={14} color="#bbb" />
           <Text style={[styles.breadcrumbTxt, styles.breadcrumbActive]}>
-            THÔNG TIN
+            INFORMATION
           </Text>
           <Feather name="chevron-right" size={14} color="#bbb" />
-          <Text style={styles.breadcrumbTxt}>VẬN CHUYỂN</Text>
+          <Text style={styles.breadcrumbTxt}>SHIPPING</Text>
         </View>
 
         <View style={styles.content}>
           <View style={styles.card}>
-            <SectionHeader title="Thông tin khách hàng" step={1} />
+            <SectionHeader title="Customer Information" step={1} />
             <FormInput
-              label="Email nhận thông báo"
+              label="Notification Email"
               value={formData.email}
               onChangeText={setField("email")}
               placeholder="example@email.com"
@@ -387,32 +387,32 @@ export default function OrderScreen() {
           </View>
 
           <View style={styles.card}>
-            <SectionHeader title="Địa chỉ nhận hàng" step={2} />
+            <SectionHeader title="Shipping Address" step={2} />
 
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
                 <FormInput
-                  label="Họ"
+                  label="First Name"
                   value={formData.firstName}
                   onChangeText={setField("firstName")}
-                  placeholder="Nguyễn"
+                  placeholder="e.g. Smith"
                   required
                 />
               </View>
               <View style={{ width: 10 }} />
               <View style={{ flex: 1 }}>
                 <FormInput
-                  label="Tên"
+                  label="Last Name"
                   value={formData.lastName}
                   onChangeText={setField("lastName")}
-                  placeholder="Văn A"
+                  placeholder="e.g. John"
                   required
                 />
               </View>
             </View>
 
             <FormInput
-              label="Số điện thoại"
+              label="Phone Number"
               value={formData.phone}
               onChangeText={setField("phone")}
               placeholder="09xxxxxxxx"
@@ -420,27 +420,27 @@ export default function OrderScreen() {
               required
             />
             <FormInput
-              label="Địa chỉ"
+              label="Address"
               value={formData.address}
               onChangeText={setField("address")}
-              placeholder="Số nhà, tên đường..."
+              placeholder="House number, street name..."
               required
             />
 
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
                 <FormInput
-                  label="Quận/Huyện"
+                  label="District"
                   value={formData.district}
                   onChangeText={setField("district")}
-                  placeholder="Quận 1"
+                  placeholder="e.g. District 1"
                   required
                 />
               </View>
               <View style={{ width: 10 }} />
               <View style={{ flex: 1 }}>
                 <FormInput
-                  label="Thành phố"
+                  label="City"
                   value={formData.city}
                   onChangeText={setField("city")}
                   placeholder="TP. HCM"
@@ -451,14 +451,14 @@ export default function OrderScreen() {
           </View>
 
           <View style={styles.card}>
-            <SectionHeader title="Phương thức thanh toán" step={3} />
+            <SectionHeader title="Payment Method" step={3} />
 
             <PaymentOption
               value="cod"
               selected={paymentMethod === "cod"}
               onSelect={setPaymentMethod}
-              title="Thanh toán khi nhận hàng (COD)"
-              subtitle="Thanh toán bằng tiền mặt khi nhận hàng"
+              title="Cash on Delivery (COD)"
+              subtitle="Pay with cash upon arrival"
               icon={<Feather name="dollar-sign" size={22} color="#555" />}
             />
 
@@ -468,7 +468,7 @@ export default function OrderScreen() {
               value="vnpay"
               selected={paymentMethod === "vnpay"}
               onSelect={setPaymentMethod}
-              title="Thanh toán qua VNPay"
+              title="Pay via VNPay"
               subtitle="ATM, Visa, MasterCard, QR Code"
               icon={
                 <Image
@@ -482,7 +482,7 @@ export default function OrderScreen() {
             />
           </View>
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryTitle}>Đơn hàng của bạn</Text>
+            <Text style={styles.summaryTitle}>Your Order</Text>
 
             {cartLoading ? (
               <ActivityIndicator
@@ -501,23 +501,23 @@ export default function OrderScreen() {
 
             <View style={styles.summaryDivider} />
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Tạm tính</Text>
+              <Text style={styles.summaryLabel}>Subtotal</Text>
               <Text style={styles.summaryValue}>{formatPrice(subtotal)}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Vận chuyển</Text>
+              <Text style={styles.summaryLabel}>Shipping</Text>
               <Text
                 style={[
                   styles.summaryValue,
                   { color: "#22c55e", fontWeight: "700" },
                 ]}
               >
-                Miễn phí
+                Free
               </Text>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryRow}>
-              <Text style={styles.totalLabel}>TỔNG CỘNG</Text>
+              <Text style={styles.totalLabel}>TOTAL</Text>
               <Text style={styles.totalAmount}>{formatPrice(total)}</Text>
             </View>
           </View>
@@ -532,14 +532,14 @@ export default function OrderScreen() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 <ActivityIndicator size="small" color="#fff" />
-                <Text style={styles.submitBtnTxt}>ĐANG XỬ LÝ...</Text>
+                <Text style={styles.submitBtnTxt}>PROCESSING...</Text>
               </View>
             ) : (
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 <Feather name="check-circle" size={18} color="#fff" />
-                <Text style={styles.submitBtnTxt}>HOÀN TẤT ĐẶT HÀNG</Text>
+                <Text style={styles.submitBtnTxt}>COMPLETE ORDER</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -549,7 +549,7 @@ export default function OrderScreen() {
             style={styles.backToCartBtn}
           >
             <Feather name="arrow-left" size={15} color="#555" />
-            <Text style={styles.backToCartTxt}>Quay lại giỏ hàng</Text>
+            <Text style={styles.backToCartTxt}>Back to Cart</Text>
           </TouchableOpacity>
         </View>
 

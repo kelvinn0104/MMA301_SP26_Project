@@ -10,14 +10,14 @@ import { useAuth } from "./AuthContext";
 import { cartAPI, cartItemAPI } from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// --- 1. Định nghĩa các Interface ---
+// --- 1. Interface Definitions ---
 export interface Product {
   _id?: string;
   id?: string;
   name: string;
   price: number;
   image?: string;
-  // Thêm các thuộc tính khác của product nếu cần
+  // Add other product properties if needed
 }
 
 export interface CartItem {
@@ -45,7 +45,7 @@ interface CartContextType {
   isInitialized: boolean;
 }
 
-// --- 2. Khởi tạo Context với kiểu dữ liệu ---
+// --- 2. Initialize Context with data types ---
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const useCart = () => {
@@ -67,7 +67,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
-  // Helper lấy ID nhất quán từ object product
+  // Helper to get consistent ID from product object
   const getPid = (p: Product) => p._id || p.id || "";
 
   const getCartKey = () => {
@@ -76,7 +76,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       : "cart_guest";
   };
 
-  // 1. Khởi tạo giỏ hàng từ AsyncStorage
+  // 1. Initialize cart from AsyncStorage
   useEffect(() => {
     const initCart = async () => {
       const key = getCartKey();
@@ -89,7 +89,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     initCart();
   }, [isAuthenticated, user]);
 
-  // 2. Lưu giỏ hàng mỗi khi thay đổi
+  // 2. Save cart whenever it changes
   useEffect(() => {
     if (isInitialized) {
       AsyncStorage.setItem(getCartKey(), JSON.stringify(cartItems));

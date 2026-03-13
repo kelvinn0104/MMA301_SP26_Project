@@ -4,17 +4,17 @@ const expoConfig = require("eslint-config-expo/flat");
 const reactNative = require("eslint-plugin-react-native");
 
 module.exports = defineConfig([
-  ...expoConfig, // Giải nén mảng expoConfig
+  ...expoConfig, // Destructure expoConfig array
   {
     plugins: {
       "react-native": reactNative,
     },
     rules: {
-      // Quy tắc quan trọng nhất để sửa lỗi "Text strings must be rendered within a <Text> component"
+      // Most important rule to fix "Text strings must be rendered within a <Text> component" errors
       "react-native/no-raw-text": [
         "error",
         {
-          skip: ["CustomButton", "SafeText"], // Bỏ qua các component tùy chỉnh nếu bạn chắc chắn chúng đã bọc Text bên trong
+          skip: ["CustomButton", "SafeText"], // Skip custom components if you're sure they wrap Text inside
         },
       ],
       "react-native/no-inline-styles": "warn",

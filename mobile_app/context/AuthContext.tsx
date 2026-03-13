@@ -8,7 +8,7 @@ import React, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authAPI } from "@/api";
 
-// --- 1. Định nghĩa Interfaces cho User và Auth ---
+// --- 1. Define Interfaces for User and Auth ---
 export interface Role {
   _id?: string;
   name: string;
@@ -20,8 +20,8 @@ export interface User {
   username: string;
   email: string;
   phone?: string;
-  role?: string; // Cho trường hợp server trả về role đơn lẻ
-  roles?: Role[]; // Cho trường hợp server trả về mảng roles
+  role?: string; // For cases where the server returns a single role
+  roles?: Role[]; // For cases where the server returns an array of roles
   avatar?: string;
 }
 
@@ -59,7 +59,7 @@ interface AuthContextType {
   isManager: () => boolean;
 }
 
-// --- 2. Khởi tạo Context ---
+// --- 2. Initialize Context ---
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Kiểm tra token khi component mount
+  // Check token when component mounts
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error("Lỗi khởi tạo Auth:", error);
+        console.error("Auth initialization error:", error);
         await AsyncStorage.multiRemove(["token", "user"]);
         setUser(null);
         setIsAuthenticated(false);
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     initAuth();
   }, []);
 
-  // Đăng nhập
+  // Login
   const login = async (
     email: string,
     password: string,
@@ -118,17 +118,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       }
       return {
         success: false,
-        message: response.message || "Đăng nhập thất bại",
+        message: response.message || "Login failed",
         data: response.data,
       };
     } catch (error: any) {
       console.error("Login error in AuthContext:", error);
-      const message = error.response?.data?.message || "Đăng nhập thất bại";
+      const message = error.response?.data?.message || "Login failed";
       return { success: false, message, data: error.response?.data };
     }
   };
 
-  // Đăng ký
+  // Register
   const register = async (
     name: string,
     email: string,
@@ -158,17 +158,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       }
       return {
         success: false,
-        message: response.message || "Đăng ký thất bại",
+        message: response.message || "Registration failed",
         data: response.data,
       };
     } catch (error: any) {
       console.error("Register error in AuthContext:", error);
-      const message = error.response?.data?.message || "Đăng ký thất bại";
+      const message = error.response?.data?.message || "Registration failed";
       return { success: false, message, data: error.response?.data };
     }
   };
 
-  // Đăng xuất
+  // Logout
   const logout = async (): Promise<void> => {
     try {
       await AsyncStorage.multiRemove(["token", "user"]);
@@ -179,7 +179,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  // Cập nhật thông tin user từ server
+  // Update user info from server
   const updateUser = async (): Promise<AuthResponse> => {
     try {
       const response = await authAPI.getCurrentUser();
@@ -196,7 +196,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  // Các hàm helper check quyền
+  // Helper functions for permission checks
   const isAdmin = (): boolean => {
     if (!user) return false;
     return (
