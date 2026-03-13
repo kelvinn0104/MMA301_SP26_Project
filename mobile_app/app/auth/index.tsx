@@ -372,9 +372,10 @@ export default function AuthScreen() {
   };
 
   const handleLoginSuccess = (role: string) => {
-    if (role === "admin") router.replace("/admin/dashboard");
-    else if (role === "manager") router.replace("/manager/dashboard");
-    else if (role === "staff") router.replace("/staff/dashboard");
+    const r = role?.toLowerCase() || "";
+    if (r === "admin") router.replace("/admin/dashboard");
+    else if (r === "manager") router.replace("/manager/dashboard");
+    else if (r === "staff") router.replace("/staff/dashboard");
     else router.replace("/");
   };
 

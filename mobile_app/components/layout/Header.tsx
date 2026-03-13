@@ -17,7 +17,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function Header() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const { getCartItemsCount } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const cartCount = getCartItemsCount();
@@ -135,6 +135,23 @@ export default function Header() {
             <Feather name="user" size={16} color="#333" />
             <Text style={styles.userMenuTxt}>Profile</Text>
           </TouchableOpacity>
+
+          {isAdmin?.() && (
+            <TouchableOpacity
+              style={[
+                styles.userMenuItem,
+                { borderTopWidth: 1, borderTopColor: "#f0f0f0" },
+              ]}
+              onPress={() => {
+                onNavigate("admin/dashboard");
+                setUserMenuOpen(false);
+              }}
+            >
+              <Feather name="grid" size={16} color="#333" />
+              <Text style={styles.userMenuTxt}>Admin Dashboard</Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             style={[
               styles.userMenuItem,
