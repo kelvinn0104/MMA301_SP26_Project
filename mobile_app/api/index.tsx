@@ -72,10 +72,10 @@ export const productAPI = {
   // },
 
   // Admin CRUD operations
-  // create: async (productData) => {
-  //   const response = await api.post("/products", productData);
-  //   return response.data;
-  // },
+  create: async (productData: any) => {
+    const response = await api.post("/products", productData);
+    return response.data;
+  },
 
   update: async (id: string, productData: any) => {
     const response = await api.put(`/products/${id}`, productData);
@@ -298,13 +298,13 @@ export const managerAPI = {
 };
 
 export const reportAPI = {
-  // getSales: async (startDate, endDate) => {
-  //   const params = {};
-  //   if (startDate) params.startDate = startDate;
-  //   if (endDate) params.endDate = endDate;
-  //   const response = await api.get("/reports/sales", { params });
-  //   return response.data;
-  // },
+  getSales: async (startDate: string, endDate: string) => {
+    const params: any = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    const response = await api.get("/reports/sales", { params });
+    return response.data;
+  },
   getTopProducts: async (limit = 10) => {
     const response = await api.get("/reports/top-products", {
       params: { limit },
