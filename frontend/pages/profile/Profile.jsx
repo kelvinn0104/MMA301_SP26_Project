@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../src/context/AuthContext';
+import { useCart } from '../../src/context/CartContext';
 import { authAPI, orderAPI } from '../../src/services/api';
 import { toast } from 'sonner';
 import Header from '../../src/components/header/Header';
@@ -8,7 +9,10 @@ import Footer from '../../src/components/footer/Footer';
 
 export default function Profile() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { user, logout, updateUser } = useAuth();
+    const { refreshCart } = useCart();
+    const handledOrderQueryRef = useRef(null);
     const [activeTab, setActiveTab] = useState('profile'); // profile, orders, settings
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -44,6 +48,13 @@ export default function Profile() {
         }
     }, [user]);
 
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab === 'profile' || tab === 'orders' || tab === 'settings') {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
+
     // Load orders when orders tab is active
     useEffect(() => {
         const fetchOrders = async () => {
@@ -52,7 +63,24 @@ export default function Profile() {
                     setLoadingOrders(true);
                     const response = await orderAPI.getMyOrders();
                     if (response.success) {
-                        setOrders(response.data || []);
+                        const fetchedOrders = response.data || [];
+                        setOrders(fetchedOrders);
+
+                        const orderIdFromQuery = searchParams.get('orderId');
+                        if (
+                            orderIdFromQuery &&
+                            handledOrderQueryRef.current !== orderIdFromQuery
+                        ) {
+                            const matchedOrder = fetchedOrders.find(
+                                (order) => order._id === orderIdFromQuery,
+                            );
+
+                            if (matchedOrder) {
+                                handledOrderQueryRef.current = orderIdFromQuery;
+                                setSelectedOrder(matchedOrder);
+                                await fetchOrderDetails(orderIdFromQuery);
+                            }
+                        }
                     }
                 } catch (error) {
                     console.error('Fetch orders error:', error);
@@ -64,7 +92,7 @@ export default function Profile() {
         };
 
         fetchOrders();
-    }, [activeTab, user]);
+    }, [activeTab, user, searchParams]);
 
     // Fetch order details
     const fetchOrderDetails = async (orderId) => {
@@ -189,6 +217,7 @@ export default function Profile() {
                 if (ordersResponse.success) {
                     setOrders(ordersResponse.data || []);
                 }
+                await refreshCart();
                 // Close modal if open
                 if (showOrderModal && selectedOrder?._id === orderToCancel) {
                     closeModal();
@@ -679,14 +708,18 @@ export default function Profile() {
                                     <div>
                                         <p className="text-sm text-gray-500">Trạng thái</p>
                                         <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${selectedOrder?.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                            selectedOrder?.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                selectedOrder?.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                    'bg-yellow-100 text-yellow-800'
+                                            selectedOrder?.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                                selectedOrder?.status === 'paid' ? 'bg-purple-100 text-purple-800' :
+                                                    selectedOrder?.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                        selectedOrder?.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-gray-100 text-gray-800'
                                             }`}>
                                             {selectedOrder?.status === 'completed' ? 'Hoàn thành' :
-                                                selectedOrder?.status === 'processing' ? 'Đang xử lý' :
-                                                    selectedOrder?.status === 'cancelled' ? 'Đã hủy' :
-                                                        'Chờ xử lý'}
+                                                selectedOrder?.status === 'shipped' ? 'Đang giao hàng' :
+                                                    selectedOrder?.status === 'paid' ? 'Đã thanh toán' :
+                                                        selectedOrder?.status === 'cancelled' ? 'Đã hủy' :
+                                                            selectedOrder?.status === 'pending' ? 'Chờ xử lý' :
+                                                                selectedOrder?.status}
                                         </span>
                                     </div>
                                 </div>

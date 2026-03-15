@@ -16,6 +16,7 @@ export const CartProvider = ({ children }) => {
     const { user, isAuthenticated } = useAuth();
     const prevUserIdRef = useRef(null);
     const [backendCartId, setBackendCartId] = useState(null);
+    const getProductId = (product) => product?._id || product?.id || product;
 
     const getCartKey = () => {
         return isAuthenticated && user ? `cart_${user._id || user.id}` : 'cart_guest';
@@ -89,6 +90,73 @@ export const CartProvider = ({ children }) => {
             console.error('❌ Error loading from backend:', error);
             return [];
         }
+    };
+
+    const refreshCart = async () => {
+        if (isAuthenticated && user) {
+            const backendItems = await loadFromBackend();
+            setCartItems(backendItems);
+            localStorage.setItem(getCartKey(), JSON.stringify(backendItems));
+            return backendItems;
+        }
+
+        const savedCart = localStorage.getItem(getCartKey());
+        const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+        setCartItems(parsedCart);
+        return parsedCart;
+    };
+
+    const restoreCart = async (items = []) => {
+        const normalizedItems = Array.isArray(items)
+            ? items
+                .map((item) => ({
+                    product: item?.product,
+                    size: item?.size || 'M',
+                    quantity: Number(item?.quantity) || 0,
+                }))
+                .filter((item) => item.product && item.quantity > 0)
+            : [];
+
+        setCartItems(normalizedItems);
+        localStorage.setItem(getCartKey(), JSON.stringify(normalizedItems));
+
+        if (!isAuthenticated || !user) {
+            return normalizedItems;
+        }
+
+        let currentCartId = backendCartId;
+        if (!currentCartId) {
+            const response = await cartAPI.getMyCart();
+            if (response?.success) {
+                currentCartId = response.cart._id;
+                setBackendCartId(currentCartId);
+            }
+        }
+
+        if (!currentCartId) {
+            return normalizedItems;
+        }
+
+        const backendResponse = await cartItemAPI.getByCart(currentCartId);
+        const backendItems = Array.isArray(backendResponse)
+            ? backendResponse
+            : (backendResponse.data || []);
+
+        for (const backendItem of backendItems) {
+            await cartItemAPI.deleteItem(backendItem._id);
+        }
+
+        for (const item of normalizedItems) {
+            await cartItemAPI.addItem(
+                currentCartId,
+                getProductId(item.product),
+                item.quantity,
+                item.product?.price ?? item.price ?? 0,
+                item.size,
+            );
+        }
+
+        return normalizedItems;
     };
 
     // Load and merge cart ONLY when user ID actually changes (login/logout)
@@ -289,6 +357,7 @@ export const CartProvider = ({ children }) => {
 
     const clearCart = () => {
         setCartItems([]);
+        localStorage.setItem(getCartKey(), JSON.stringify([]));
     };
 
     const getCartTotal = () => {
@@ -309,6 +378,8 @@ export const CartProvider = ({ children }) => {
                 removeFromCart,
                 updateQuantity,
                 clearCart,
+                refreshCart,
+                restoreCart,
                 getCartTotal,
                 getCartItemsCount,
             }}

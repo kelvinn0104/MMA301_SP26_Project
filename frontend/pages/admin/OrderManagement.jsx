@@ -384,7 +384,7 @@ export default function OrderManagement() {
                     <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center p-6 border-b">
                             <h3 className="text-xl font-bold text-gray-900">
-                                Order Details - #{selectedOrder.order?._id.slice(-8).toUpperCase()}
+                                Order Details - #{selectedOrder?.order?._id?.slice(-8)?.toUpperCase() || 'N/A'}
                             </h3>
                             <button
                                 onClick={() => setShowDetailModal(false)}

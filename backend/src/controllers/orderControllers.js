@@ -4,6 +4,7 @@ import Payment from "../models/Payment.js";
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import CartItem from "../models/CartItem.js";
+import User from "../models/User.js";
 
 const computeTotal = (items) => {
   return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -26,12 +27,18 @@ export const getOrderById = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Kiểm tra quyền: chỉ cho phép user xem đơn hàng của chính họ hoặc admin/manager
     const userId = req.userId;
-    const userRoles = req.user?.roles || [];
-    const isAdmin = userRoles.some(
-      (role) => role.name === "admin" || role.name === "manager",
-    );
+    const requester = await User.findById(userId).populate("roles", "name");
+    if (!requester) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const isAdmin =
+      requester.role === "admin" ||
+      requester.role === "manager" ||
+      (requester.roles || []).some(
+        (role) => role?.name === "admin" || role?.name === "manager",
+      );
 
     if (!isAdmin && order.user.toString() !== userId) {
       return res

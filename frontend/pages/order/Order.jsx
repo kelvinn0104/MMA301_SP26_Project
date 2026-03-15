@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import Header from '../../src/components/header/Header';
 import Footer from '../../src/components/footer/Footer';
 
+const PENDING_VNPAY_CART_KEY = 'pending_vnpay_cart_restore';
+
 export default function Order() {
     const navigate = useNavigate();
     const { cartItems, clearCart } = useCart();
@@ -156,7 +158,10 @@ export default function Order() {
                     return;
                 }
 
-                clearCart();
+                localStorage.setItem(
+                    PENDING_VNPAY_CART_KEY,
+                    JSON.stringify({ items: effectiveCartItems }),
+                );
                 window.location.href = paymentUrl;
                 return;
             }

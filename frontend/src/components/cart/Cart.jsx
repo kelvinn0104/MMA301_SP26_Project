@@ -10,7 +10,7 @@ import Footer from '../footer/Footer';
 
 export default function Cart() {
     const navigate = useNavigate();
-    const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
+    const { cartItems, removeFromCart, updateQuantity, refreshCart, getCartTotal } = useCart();
     const { isAuthenticated } = useAuth();
     const [relatedProducts, setRelatedProducts] = useState([]);
     const cardRefs = useRef([]);
@@ -40,6 +40,11 @@ export default function Cart() {
 
     useEffect(() => {
         fetchRelatedProducts();
+    }, []);
+
+    useEffect(() => {
+        refreshCart();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
